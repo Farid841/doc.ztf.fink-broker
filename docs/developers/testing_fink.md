@@ -4,7 +4,7 @@ Installing Fink is not too complicated but might be an overwhelming task. Fink c
 
 ### Running the test suite with Docker
 
-In general, you can follow what is done for the [continuous integration](https://github.com/astrolabsoftware/fink-broker/blob/master/.github/workflows/test.yml). Once the image `julienpeloton/fink-ci:latest` (DockerHub) is pulled, fire a container and set the `PYTHONPATH` and `PATH` to use the tools:
+In general, you can follow what is done for the [continuous integration](https://github.com/astrolabsoftware/fink-broker/blob/master/.github/workflows/sentinel-template.yml). Once the image `gitlab-registry.in2p3.fr/astrolabsoftware/fink/fink-deps-sentinel-ztf:latest` (DockerHub) is pulled, fire a container and set the `PYTHONPATH` and `PATH` to use the tools:
 
 ```bash
 # in your ~/.bash_profile
