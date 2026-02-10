@@ -13,7 +13,7 @@ export PYTHONPATH=$FINK_HOME:$PYTHONPATH
 export PATH=$FINK_HOME/bin:$PATH
 ```
 
-The fink-broker repository contains some alerts from the ZTF experiment required for the test suite in the folder `datasim`. Make sure the test suite is running fine. Just execute:
+The [fink-alert-schemas](https://github.com/astrolabsoftware/fink-alert-schemas) repository contains some alerts from the ZTF experiment required for the test suite in the folder `datasim`. Make sure the test suite is running fine. Just execute:
 
 ```bash
 fink_test_ztf -c conf/fink.conf.dev --stream-integration --db-integration --mm-offline --unit-tests
