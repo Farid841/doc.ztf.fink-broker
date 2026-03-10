@@ -65,6 +65,7 @@ In Fink, you can upload pre-trained models, and each alert will receive a score.
 | `t2` | dic[str, float] | Vector of probabilities (class, prob) using Transformers ([arxiv:2105.06178](https://arxiv.org/abs/2105.06178)) | 2023/01 |
 | `lc_*` | dict[int, array<double>] | Numerous [light curve features](https://arxiv.org/pdf/2012.01419.pdf#section.A1) used in astrophysics. Fields are detailed in the [science module](https://github.com/astrolabsoftware/fink-science/tree/master/fink_science/ztf/ad_features)| 2023/01 |
 | `anomaly_score` | float | Probability of an alert to be anomalous (lower values mean more anomalous observations) based on `lc_*` | 2023/01 |
+| `slsn_score` | float | Superluminous supernovae classification score between 0 and 1. Return -1 if not enough points were available for feature extraction, if the alert is not considered a likely transient, or if the source is less than 30 days old. | 2025/10 |
 
 ### Standard modules
 
@@ -82,6 +83,9 @@ Standard modules typically issue flags or aggregated information to ease the pro
 | `upper_rate` | double | 95% percentile of the magnitude rate sampling used for the error computation (`sigma_rate`) | 2023/12 |
 | `delta_time` | double | delta time between the the two measurement used for the magnitude rate `mag_rate` | 2023/12 |
 | `from_upper` | bool | if True, the magnitude rate `mag_rate` has been computed using the last upper limit and the current measurement | 2023/12 |
+| `blazar_stats_m{i}` | float | Feature for characterising CTAO blazar state. m0, m1 related to low state robustness and m2 related to low state duration. see [2509.21109](https://arxiv.org/abs/2509.21109) for more information. | 2025/02 |
+| `is_transient` | bool | True if the alert is considered as pure static transient. See [zenodo](https://zenodo.org/records/4054129). | 2025/10 |
+
 
 ### Post-processing modules
 
