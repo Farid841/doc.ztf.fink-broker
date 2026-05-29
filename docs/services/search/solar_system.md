@@ -203,7 +203,7 @@ For more information about the ZTF stamps, see [https://irsa.ipac.caltech.edu/da
 
 #### Getting lightcurve residuals
 
-We have several phase curve models implemented in Fink (see the SSOFT section below). You can retrieve the residuals (`obs - model`) using the sHG1G2 model (Carry et al. 2024):
+We have several phase curve models implemented in Fink (see the SSOFT section below). You can retrieve the residuals (`obs - model`) using the SHG1G2 model (Carry et al. 2024):
 
 ```python
 import requests
@@ -273,7 +273,7 @@ curl -H "Content-Type: application/json" -X POST \
     -o sso_fink_ztf_lc.parquet
 ```
 
-It will download a 2GB parquet file on disk. The `output-format` can be Parquet, CSV or JSON (CSV and JSON will produce a much bigger file than Parquet). Columns should be self-explanatory, except the column residuals which is the difference between lightcurve and the sHG1G2 model (Carry et al 2024). This file contains only the SSO that pass criteria for model fitting (at least 50 measurements, all bands). That's about 180k objects.
+It will download a 2GB parquet file on disk. The `output-format` can be Parquet, CSV or JSON (CSV and JSON will produce a much bigger file than Parquet). Columns should be self-explanatory, except the column residuals which is the difference between lightcurve and the SHG1G2 model (Carry et al 2024). This file contains only the SSO that pass criteria for model fitting (at least 50 measurements, all bands). That's about 180k objects.
 
 This endpoint is a result of the LSST SSSC Sprint 2026 at Queens University, Belfast.
 
@@ -370,7 +370,7 @@ pdf = pd.read_parquet(io.BytesIO(r.content))
 
 ### Flavors
 
-By default, we expose the parameters from the `sHG1G2` model, that is `HG1G2`
+By default, we expose the parameters from the `SHG1G2` model, that is `HG1G2`
 augmented with shape and spin parameters (see [Carry et al 2024](https://doi.org/10.1051/0004-6361/202449789)). You can also choose standard `HG` or `HG1G2` models:
 
 ```python
