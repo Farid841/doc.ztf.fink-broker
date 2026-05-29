@@ -259,6 +259,24 @@ The button `?` will give you access to snippets of code to download data program
 
 ![screenshot](../../img/download_sso_2.png)
 
+## Bulk download for all SSO lightcurves
+
+!!! warning "Experimental service"
+    The list of arguments for retrieving all SSO data can be found at [https://api.ztf.fink-portal. org](https://api.ztf.fink-portal.org) (`/api/v1/ssobulk` endpoint). This is an experimental service, and data is updated at random points. Last update was February 2026.
+
+This service lets you download all SSO lightcurve in once:
+
+```bash
+curl -H "Content-Type: application/json" -X POST \
+    -d '{"output-format":"parquet"}' \
+    https://api.ztf.fink-portal.org/api/v1/ssobulk \
+    -o sso_fink_ztf_lc.parquet
+```
+
+It will download a 2GB parquet file on disk. The `output-format` can be Parquet, CSV or JSON (CSV and JSON will produce a much bigger file than Parquet). Columns should be self-explanatory, except the column residuals which is the difference between lightcurve and the sHG1G2 model (Carry et al 2024). This file contains only the SSO that pass criteria for model fitting (at least 50 measurements, all bands). That's about 180k objects.
+
+This endpoint is a result of the LSST SSSC Sprint 2026 at Queens University, Belfast.
+
 
 ## SSoFT: Solar System object Fink Table
 
