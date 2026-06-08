@@ -30,10 +30,6 @@ nav = [
       { "Fink filters" = "broker/filters.md" },
       { "Classification" = "broker/classification.md" }
     ]},
-  { "ML Inference" = [
-      { "Pipeline Overview" = "ml/inference-pipeline.md" },
-      { "Getting Started" = "ml/getting-started.md" },
-    ]},
   { Services = [
       { Overview = "broker/science_modules.md" },
       # { "Science Portal" = [
@@ -57,6 +53,7 @@ nav = [
         ]},
         { "Livestream" = "services/livestream.md" },
         { "Data Transfer" = "services/data_transfer.md" },
+        { "Fink AI" = "services/fink_ai.md" },
         # { Xmatch = "" },
     ]},
   { "Developer corner" = [
