@@ -28,48 +28,45 @@ nav = [
   { Science = [
       { "Fink science modules" = "broker/science_modules.md" },
       { "Fink filters" = "broker/filters.md" },
-      { "Classification" = "broker/classification.md" }
+      { "Classification" = "broker/classification.md" },
+      { "Accessing alert data" = "broker/services_summary.md" }
     ]},
   { Services = [
       { Overview = "broker/science_modules.md" },
-      # { "Science Portal" = [
-      #     {"Search" = ""},
-      #     {"Static objects" = ""},
-      #     {"Solar System objects" = ""},
-      # ]},
       { "REST API" = [
-          # { "Cheat Sheet" = "services/search/cheatsheet.md" },
+         # { "Cheat Sheet" = "services/search/cheatsheet.md" },
+          { "Getting started" = "services/search/getting_started.md" },
+          { "Search by name" = "services/search/objectid.md" },
+          { "Search by class" = "services/search/classsearch.md" },
           { "Conesearch" = "services/search/conesearch.md" },
-          # { "Search by diaObjectId" = "services/search/diaobjectid.md" },
           { "Search by Solar System object name" = "services/search/solar_system.md" },
-          # { "Search by tag" = "services/search/tagsearch.md" },
           { "Resolving astronomical names" = "services/search/resolver.md" },
-          # { "Forced photometry" = "services/search/forced_photometry.md" },
           { "Image data" = "services/search/imagesearch.md" },
           { "Statistics" = "services/search/statistics.md" },
           { "Columns, blocks and tags definition" = "services/search/definitions.md" },
-          # { "Tips" = "services/search/tips.md" },
+          { "Space awareness" = "services/search/tracklet.md" },
+          { "Multi-messenger" = "services/search/gw.md" },
+          { "Anomaly detection" = "services/search/anomaly_detection.md" },
           { "Troubleshooting" = "services/search/troubleshooting.md" }
         ]},
+        { "fink-client" = "services/fink_client.md" },
         { "Livestream" = "services/livestream.md" },
         { "Data Transfer" = "services/data_transfer.md" },
-        { "Fink AI" = "services/fink_ai.md" },
-        # { Xmatch = "" },
+        { "Xmatch" = "services/xmatch.md" },
+        { "TOM Fink" = "services/tom_fink.md" },
+        { "Troubleshooting" = "troubleshooting.md" },
+
     ]},
   { "Developer corner" = [
       { "Source code" = "source-code.md" },
       { "Release Notes" = "release-notes.md" },
       { "Contributing" = "contributing.md" },
-  #     { "fink-client" = "" },
       { "Alert schemas" = "developers/schemas.md" },
       { "Designing a science module" = "developers/science_module_tutorial.md" },
       { "Designing a filter" = "developers/filter_tutorial.md" },
-  #     { "Testing Fink" = "developers/testing_fink.md" },
-      # { "Connecting Fink" = [
-      #     { "Fink-TOM" = "developers/external/tom_fink.md" }
-      #   ]}
+      { "Testing Fink" = "developers/testing_fink.md" },
     ]},
-  # {"Citing Fink" = ""}
+  
 ]
 extra_css = [
     "assets/stylesheets/extra.css",
