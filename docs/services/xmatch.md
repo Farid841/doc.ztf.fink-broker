@@ -57,7 +57,8 @@ Finally if you are happy with your setup, just submit your job on the last step!
 Assuming you [registered](https://github.com/astrolabsoftware/fink-client?tab=readme-ov-file#registration), you can simply retrieve the catalog of matches using the fink-client:
 
 ```bash
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic fxmatch_ztf_2025-07-22_534049 \
     -outdir fxmatch_ztf_2025-07-22_534049 \
     --verbose

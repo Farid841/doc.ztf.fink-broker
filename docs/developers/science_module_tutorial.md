@@ -145,7 +145,7 @@ Once you have an account, install it and register your credentials on the contai
 pip install fink-client
 
 # register using your credentials
-fink_client_register ...
+finkctl auth register -survey ztf ...
 ```
 
 Trigger a job on the Data Transfer service and download data in your container (July 12 2024 is good to start, only 17k alerts):
@@ -155,7 +155,8 @@ Trigger a job on the Data Transfer service and download data in your container (
 TOPIC=ftransfer_ztf_2024-07-16_682277
 
 mkdir -p /data/$TOPIC
-fink_datatransfer \
+finkctl transfer \
+            -survey ztf \
             -topic $TOPIC \
             -outdir /data/$TOPIC \
             -partitionby finkclass \
