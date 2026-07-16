@@ -63,7 +63,7 @@ rf_snia_vs_nonia > 0.5;
 snn_snia_vs_nonia > 0.5;
 ```
 
-See [here](https://zwickytransientfacility.github.io/ztf-avro-alert/) for the available ZTF fields. Note that ZTF fields most users want will typically start with `candidate.`. Fink added value fields can be found at [https://doc.ztf.fink-broker.org/en/latest/broker/science_modules/](https://doc.ztf.fink-broker.org/en/latest/broker/science_modules/).
+See [here](https://zwickytransientfacility.github.io/ztf-avro-alert/) for the available ZTF fields. Note that ZTF fields most users want will typically start with `candidate.`. Fink added value fields can be found at [https://doc.ztf.fink-broker.org/broker/science_modules/](https://doc.ztf.fink-broker.org/broker/science_modules/).
 
 Finally you can choose the content of the alerts to be returned. You have three types of content:
 1. Light packet: lightweight (~1.4 KB/alerts), this option transfers only necessary fields for working with lightcurves plus all Fink added values. Prefer this option to start.
@@ -93,7 +93,8 @@ On the submission web page, when you read the message:
 this means you can already start polling the data on your computer. You will then invoke for example (see the command on the right panel):
 
 ```bash
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic <topic name> \
     -outdir <output directory> \
     -partitionby finkclass \
@@ -151,7 +152,8 @@ You can stop the poll by hitting `CTRL+C` on your keyboard, and resume later. Th
 ```bash
 # Make sure <output directory> is empty or does not
 # exist to avoid duplicates.
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic <topic name> \
     -outdir <output directory> \
     -partitionby finkclass \
@@ -162,25 +164,27 @@ fink_datatransfer \
 Note that you can also partition by time (`year/month/day`) instead of partitioning by `finkclass`:
 
 ```bash
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic <topic name> \
     -outdir <output directory> \
     -partitionby time \
     --verbose
 ```
 
-Finally you can inspect the schema of the alerts using the option `--dump_schema`:
+Finally you can inspect the schema of the alerts using the option `--dump_schemas`:
 
 
 ```bash
 # Make sure <output directory> is empty or does not
 # exist to avoid duplicates.
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic <topic name> \
     -outdir <output directory> \
     -partitionby finkclass \
     --verbose \
-    --dump_schema
+    --dump_schemas
 ```
 
 The option will produce a json file on disk whose name is `schema_<topic name>.json`. Schema can be inspected using e.g.:
@@ -197,7 +201,8 @@ By using this strategy, the service is able to simultaneously access different p
 By default, the client will use all available logical CPUs. You can also specify the number of CPUs to use, as well as the batch size from the command line:
 
 ```bash
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic <topic name> \
     -outdir <output directory> \
     -partitionby finkclass \

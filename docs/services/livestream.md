@@ -22,8 +22,8 @@ For the list of available topics, see [https://doc.ztf.fink-broker.org/en/latest
 Processed alerts are stored 4 days on our servers, which means if you forget to poll data, you'll be able to retrieve it up to 4 days after emission. This also means on your first connection, you will have 4 days of alert to retrieve. Before you get all of them, let's retrieve the first available alert to check the connection. On a terminal, run the following
 
 ```bash
-# access help using `fink_consumer -h`
-fink_consumer --display -limit 1
+# access help using `finkctl stream -h`
+finkctl stream -survey ztf --display -limit 1
 ```
 
 This will download the first available alert, and print some useful information.  The alert schema is automatically downloaded from the GitHub repo (see the Troubleshooting section if that command does not work). Then the alert is consumed and you'll move to the next alert. Of course, if you want to keep the data, you need to store it. This can be easily done:
@@ -32,15 +32,15 @@ This will download the first available alert, and print some useful information.
 # create a folder to store alerts
 mkdir alertDB
 
-# access help using `fink_consumer -h`
-fink_consumer --display --save -outdir alertDB -limit 1
+# access help using `finkctl stream -h`
+finkctl stream -survey ztf --display --save -outdir alertDB -limit 1
 ```
 
 This will download the next available alert, display some useful information on screen, and save it (Apache Avro format) on disk. Then if all works, then you can remove the limit, and let the consumer run for ever!
 
 ```bash
-# access help using `fink_consumer -h`
-fink_consumer --display --save -outdir alertDB
+# access help using `finkctl stream -h`
+finkctl stream -survey ztf --display --save -outdir alertDB
 ```
 
 ## Inspecting alerts
@@ -48,9 +48,9 @@ fink_consumer --display --save -outdir alertDB
 Once alerts are saved, you can open it and explore the content. We wrote a small utility to quickly visualise it:
 
 ```bash
-# access help using `fink_alert_viewer -h`
+# access help using `python -m fink_client.scripts.fink_alert_viewer -h`
 # Adapt the filename accordingly -- it is <objectId>_<candid>.avro
-fink_alert_viewer -filename alertDB/ZTF21aaqkqwq_1549473362115015004.avro
+python -m fink_client.scripts.fink_alert_viewer -filename alertDB/ZTF21aaqkqwq_1549473362115015004.avro
 ```
 
 of course, you can develop your own tools based on this one! Note Apache Avro is not something supported by default in Pandas for example, so we provide a small utilities to load alerts more easily:
@@ -72,7 +72,7 @@ r.to_pandas()
 You might want to check where you are on the different queues, that is retrieving the offsets for each topic that you are polling:
 
 ```bash
-fink_consumer --display_statistics
+finkctl stream -survey ztf --display_statistics
 
 Topic [Partition]                                   Committed        Lag
 ========================================================================
@@ -97,7 +97,7 @@ For the first topic, there is one active partition on the remote Kafka cluster t
 Sometimes you might want to poll again alerts, that is restarting to poll from the beginning of a queue. For this, you can use:
 
 ```bash
-fink_consumer --display -start_at earliest
+finkctl stream -survey ztf --display -start_at earliest
 Resetting offsets to BEGINNING
 ...
 assign TopicPartition{topic=fink_sso_fink_candidates_ztf,partition=0,offset=0,leader_epoch=None,error=None}
@@ -110,7 +110,7 @@ assign TopicPartition{topic=fink_sso_ztf_candidates_ztf,partition=0,offset=0,lea
 All your topic partitions will be reset to the starting offset (`0` in this case). Similarly, you can empty all topics, and restarting polling from the last offset:
 
 ```bash
-fink_consumer --display -start_at latest
+finkctl stream -survey ztf --display -start_at latest
 ...
 assign TopicPartition{topic=fink_sso_fink_candidates_ztf,partition=0,offset=0,leader_epoch=None,error=None}
 ...
@@ -122,7 +122,7 @@ No alerts the last 10 seconds
 ...
 ```
 
-Empty partitions will have `offset=0`, but others will have their offset to the latest one. The client will then wait for new data to come. Note that the reset will be actually triggered on the next poll. Hence the command `fink_consumer --display_statistics` will not right away display the reset offsets.
+Empty partitions will have `offset=0`, but others will have their offset to the latest one. The client will then wait for new data to come. Note that the reset will be actually triggered on the next poll. Hence the command `finkctl stream -survey ztf --display_statistics` will not right away display the reset offsets.
 This is particularly useful after a bug in the topic (malformed alerts pushed), and you want a fresh restart.
 
 ## Write your own consumer
@@ -265,13 +265,13 @@ IndexError: list index out of range
 This error happens when the schema to decode the alert is not matching the alert content. Usually this should not happen (schema is included in the alert payload). In case it happens though, you can force a schema:
 
 ```
-fink_consumer [...] -schema [path_to_a_good_schema]
+finkctl stream -survey ztf [...] -ext_schema [path_to_a_good_schema]
 ```
 
 In case you do not have replacement schemas, you can save the current (faulty) schema that is contained within an alert packet:
 
 ```bash
-fink_consumer -limit 1 --dump_schema
+finkctl stream -survey ztf -limit 1 --dump_schema
 ```
 
 You will see the traceback above, with the message:
@@ -324,5 +324,5 @@ maxtimeout: 30
 
 <!-- ```bash
 # does not work -- how to modify yaml?
-fink_client_register -maxtimeout 30
+finkctl auth register -maxtimeout 30
 ``` -->

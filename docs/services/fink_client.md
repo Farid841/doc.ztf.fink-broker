@@ -34,57 +34,70 @@ pip install .
 In order to connect and poll alerts from Fink, you first need to get your credentials. Subscribe by filling this [form](https://forms.gle/2td4jysT4e9pkf889) (same than for the livestream service -- so you do not need to it twice). After filling the form, we will send your credentials. Register them on your laptop by simply running on a terminal:
 
 ```bash
-# access help using `fink_client_register -h`
-fink_client_register \
+# access help using `finkctl auth register -h`
+finkctl auth register \
+    -survey ztf \ # or lsst
     -username <USERNAME> \ # given privately
-    -group_id <GROUP_ID> \ # given privately
-    -mytopics <topic1 topic2 etc> \ # see https://doc.ztf.fink-broker.org/en/latest/broker/filters/
+    -groupid <GROUP_ID> \ # given privately
     -servers kafka-ztf.fink-broker.org:24499 \
-    -maxtimeout 10 \ # in seconds
-     --verbose
+    -maxtimeout 10 # in seconds
 ```
 
-where `<USERNAME>` and `<GROUP_ID>` have been sent to you privately. By default, the credentials are installed in the home:
+where `<USERNAME>` and `<GROUP_ID>` have been sent to you privately. Note that each survey (`ztf` or `lsst`) has its own configuration file, and you should run `finkctl auth register` for each survey you use. Once registered for the Livestream service, add the topics you want to poll:
 
 ```bash
-cat ~/.finkclient/credentials.yml
+# see https://doc.ztf.fink-broker.org/en/latest/broker/filters/
+finkctl topic subscribe -survey ztf -name <topic name>
 ```
+
+By default, the credentials are installed in the home:
+
+```bash
+cat ~/.finkclient/ztf_credentials.yml
+cat ~/.finkclient/lsst_credentials.yml
+```
+
+You can also inspect your current configuration at any time with `finkctl auth show -survey ztf`.
 
 ## Available tools
 
-Depending on the service you are using, you will use a different tool to retrieve your data from the Fink Kafka cluster:
+Everything is now exposed through a single command-line entry point, `finkctl`, with one subcommand per service:
 
-- The `Livestream` service relies on `fink_consumer`
-- The `Data Transfer` service relies on `fink_datatransfer`
-- The `Xmatch` service relies on `fink_datatransfer` as well.
+- The `Livestream` service relies on `finkctl stream`
+- The `Data Transfer` service relies on `finkctl transfer`
+- The `Xmatch` service relies on `finkctl transfer` as well.
 
-For each tool, you can access its documentation by using the `-h` option:
+For each subcommand, you can access its documentation by using the `-h` option:
 
 ```bash
-$ fink_consumer -h
-usage: fink_consumer [-h] [--display] [--display_statistics] [-limit LIMIT]
-                     [--available_topics] [--save] [-outdir OUTDIR]
-                     [-schema SCHEMA] [--dump_schema] [-start_at START_AT]
+$ finkctl stream -h
+Usage: finkctl stream [OPTIONS]
 
-Kafka consumer to listen and archive Fink streams from the Livestream service
+  Poll alerts from the Fink Livestream service and save or redirect alerts
+  using Fink bots
 
-options:
-  -h, --help            show this help message and exit
-  --display             If specified, print on screen information about incoming
-                        alert.
-  --display_statistics  If specified, print on screen information about queues,
-                        and exit.
-  -limit LIMIT          If specified, download only `limit` alerts. Default is
-                        None.
-  --available_topics    If specified, print on screen information about
-                        available topics.
-  --save                If specified, save alert data on disk (Avro). See also
-                        -outdir.
-  -outdir OUTDIR        Folder to store incoming alerts if --save is set. It
-                        must exist.
-  -schema SCHEMA        Avro schema to decode the incoming alerts. Default is
-                        None (version taken from each alert)
-  --dump_schema         If specified, save the schema on disk (json file)
-  -start_at START_AT    If specified, reset offsets to 0 (`earliest`) or empty
-                        queue (`latest`).
+  The list of available topics can be seen from `finkctl topic list`.
+
+Options:
+  -survey [ztf|lsst]     Survey name.  [required]
+  -limit INTEGER         If specified, download only `limit` alerts. Default
+                         is None.
+  -start_at TEXT         If specified, reset offsets to 0 (`earliest`) or
+                         empty queue (`latest`).
+  -outdir TEXT           Folder to store incoming alerts if --save is set.
+                         It must exist.
+  -ext_schema TEXT       Path to Avro schema to decode the incoming alerts.
+                         Default is None (version taken from each alert)
+  --display_statistics   If specified, print on screen information about
+                         queues, and exit.
+  --display              If specified, print on screen information about
+                         incoming alert.
+  --save                 If specified, save alert data on disk (Avro). See
+                         also -outdir.
+  --telegram             If specified, redirect alerts on a Telegram
+                         channel.
+  --slack                If specified, redirect alerts on a Slack channel.
+  --dump_schema          If specified, save the schema on disk (json file)
+                         before polling.
+  -h, --help             Show this message and exit.
 ```

@@ -1,8 +1,8 @@
 # Fink AI
 
-_date 07/06/2026_
+_date 20/07/2026_
 
-This manual covers the Fink AI service, available at [https://ztf.fink-portal.org/inference](https://ztf.fink-portal.org/inference).
+This manual covers the Fink AI service, available at [https://ztf.fink-portal.org/download](https://ztf.fink-portal.org/download).
 In case of trouble, send us an email (contact@fink-broker.org) or [open an issue](https://github.com/astrolabsoftware/fink-broker/issues).
 
 ## Purpose
@@ -51,10 +51,10 @@ Select one or more models from the MLflow registry. Each selected model adds **o
 **Step 5** Launch. After submission the page displays your output topic name and the command to retrieve your data:
 
 ```bash
-fink_datatransfer \
+finkctl transfer \
+    -survey ztf \
     -topic fink_ai_2026-06-07_123456 \
     -outdir fink_ai_2026-06-07_123456 \
-    -servers 157.136.253.223:24499 \
     --verbose
 ```
 
@@ -143,11 +143,11 @@ The preprocessing image is built automatically by CI using the `Dockerfile` in `
 
 ### Block 2 Model
 
-The model image wraps your trained MLflow model together with the Kafka bridge. It:
+The model image wraps your trained MLflow model together with the Kafka connexions. It:
 
 1. Reads the feature envelopes `{"objectId": ..., "candid": ..., "features": [...]}` from the intermediate Kafka topic.
 2. Calls the MLflow `/invocations` endpoint with the feature vectors.
-3. Writes `{"result": {"predictions": [score]}, "source": {"objectId": ..., "candid": ...}, "bridge": "model@version"}` to the output topic.
+3. Writes `{"result": {"predictions": [score]}, "source": {"objectId": ..., "candid": ...}, "model": "model@version"}` to the output topic.
 
 You train and log your model with MLflow as usual:
 
@@ -168,7 +168,7 @@ with mlflow.start_run():
     )
 ```
 
-The model image is also built by CI. It uses `Dockerfile.model` and bundles the Kafka bridge (`fink_datainference.py`) together with `mlflow models serve`.
+The model image is also built by CI.
 
 ### CI and MLflow tags
 
@@ -181,15 +181,9 @@ After both images are built and pushed to GHCR, CI sets two tags on the MLflow m
 
 **A model version only appears in the Fink AI selector if both tags are present.** This guarantees that only successfully built and tested models can be launched.
 
-You can check or set tags manually in the MLflow UI or via the API:
+You can check the tags directly in the MLflow UI, under **Models → your model → Versions**:
 
-```python
-from mlflow import MlflowClient
-
-client = MlflowClient(tracking_uri="https://mlflow-dev.fink-broker.org")
-client.set_model_version_tag("my-ztf-classifier", "1", "preprocessing_image", "ghcr.io/...")
-client.set_model_version_tag("my-ztf-classifier", "1", "model_image",         "ghcr.io/...")
-```
+![Model registry versions with preprocessing_image and model_image tags](../img/fink_ai_model_registry_tags.png)
 
 ---
 
@@ -200,19 +194,25 @@ client.set_model_version_tag("my-ztf-classifier", "1", "model_image",         "g
 You need access to the Fink MLflow registry:
 
 - Tracking URI: `https://mlflow-dev.fink-broker.org`
-- Credentials: contact the Fink team to get a username and password.
+- Credentials: authentication is done via SSO (eduGAIN or ORCID account). Log in at [mlflow-dev.fink-broker.org/oidc/ui/user](https://mlflow-dev.fink-broker.org/oidc/ui/user), then click **+ Create Access Token** on your User Page to generate one.
 
-Set the environment variables before logging your model:
+![MLflow user page](../img/fink_ai_mlflow_user_page.png)
+
+![Create access token](../img/fink_ai_mlflow_create_token.png)
+
+Set the environment variables before logging your model, using your username (shown on the User Page) and the access token as password:
 
 ```bash
 export MLFLOW_TRACKING_URI=https://mlflow-dev.fink-broker.org
 export MLFLOW_TRACKING_USERNAME=your_username
-export MLFLOW_TRACKING_PASSWORD=your_password
+export MLFLOW_TRACKING_PASSWORD=your_access_token
 ```
+
+New to logging models and preprocessing with MLflow? Follow the step-by-step notebooks in [fink-tutorials/ztf/fink ai](https://github.com/astrolabsoftware/fink-tutorials/tree/main/ztf/fink%20ai): local setup and first run, then sending a run to the remote server.
 
 ### fink-client
 
-To download results you need `fink-client` ≥ 9.2. See [fink_client.md](fink_client.md) for installation instructions.
+To download results you need `fink-client`. See [fink_client.md](fink_client.md) for installation instructions.
 
 ### Docker / GHCR (for model authors)
 
