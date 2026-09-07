@@ -1,9 +1,9 @@
 # Fink AI
 
-_date 04/09/2026_
+_date 07/09/2026_
 
 This manual covers the Fink AI service, available at [https://ztf.fink-portal.org/download](https://ztf.fink-portal.org/download).
-In case of trouble, send us an email (contact@fink-broker.org) or [open an issue](https://github.com/astrolabsoftware/fink-broker/issues).
+In case of trouble, send us an email (contact@fink-broker.org) or [open an issue](https://github.com/astrolabsoftware/ztf.fink-portal.org/issues).
 
 ## Purpose
 
@@ -17,14 +17,14 @@ This cycle makes it **slow and costly to iterate** on ML models. A researcher wh
 
 Beyond deployment delays, there is a deeper constraint: **all science modules share the same execution environment inside the broker**. This means every module must use the same versions of every package: `numpy`, `scikit-learn`, `tensorflow`, etc. A user who needs a specific library version for their model, or who wants to experiment with a new framework, simply cannot do so without potentially breaking every other module in the pipeline. This rigidity severely limits the flexibility researchers need to iterate on their models.
 
-**Fink AI removes both bottlenecks.** It lets any user register a model in the Fink [MLflow](https://mlflow.org/) registry and immediately run it on any slice of historical ZTF data, using its own isolated Docker image with whatever dependencies it needs, without touching the broker codebase, without waiting for a release, and without interfering with anyone else.
+**Fink AI removes both bottlenecks.** It lets any user register a model in the Fink [MLflow](https://mlflow-dev.fink-broker.org/) registry and immediately run it on any slice of historical ZTF data, using its own isolated Docker image with whatever dependencies it needs, without touching the broker codebase, without waiting for a release, and without interfering with anyone else.
 
 Results land in a private Kafka topic within minutes and can be downloaded with the standard [fink-client](fink_client.md).
 
 In short: **Fink AI is a sandbox for science modules.** Same data, same pipeline infrastructure, full dependency isolation, zero deployment friction.
 
 !!! note "Roadmap"
-    Fink AI is currently available as part of the [Data Transfer](data_transfer.md) service: it runs on historical data on demand. The long-term goal is to integrate it directly into the **live alert stream**, so that user models can score every new alert in real time, alongside the official Fink science modules.
+    Fink AI is currently available as part of the [Data Transfer](data_transfer.md) service, at [https://ztf.fink-portal.org/download](https://ztf.fink-portal.org/download): it runs on historical data on demand. The long-term goal is to integrate it directly into the **live alert stream**, so that user models can score every new alert in real time, alongside the official Fink science modules.
 
 ---
 
@@ -139,11 +139,14 @@ def pre_processing(alert: dict) -> list[float]:
 
 A `requirements.txt` file must sit next to `preprocessing.py`. It can be empty if only the standard library is used.
 
-The preprocessing image is built automatically by CI using the `Dockerfile` in `mlflow-preprocessing-runner/docker/`. You **do not** build or push the image yourself; CI does it after validating the contract (see [CI and MLflow tags](#ci-and-mlflow-tags)).
+The **preprocessing image** is built automatically by CI using the `Dockerfile` in [`mlflow-preprocessing-runner/docker/`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/tree/main/docker). You **do not** build or push the image yourself; CI does it after validating the contract (see [CI and MLflow tags](#ci-and-mlflow-tags)).
+
+!!! note "Already available in the base image"
+    The base preprocessing image already ships with `fastavro`, `confluent-kafka`, `fastapi`, and `uvicorn` pre-installed — no need to list them in your `requirements.txt`. See the [base `Dockerfile`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/blob/main/docker/Dockerfile) for the exact versions.
 
 ### Block 2 Model
 
-The model image wraps your trained MLflow model together with the Kafka connexions. It:
+The model image wraps your trained MLflow model together with the Kafka connections. It:
 
 1. Reads the feature envelopes `{"objectId": ..., "candid": ..., "features": [...]}` from the intermediate Kafka topic.
 2. Calls the MLflow `/invocations` endpoint with the feature vectors.
@@ -170,9 +173,12 @@ with mlflow.start_run():
 
 The model image is also built by CI.
 
+!!! note "Already available in the base image"
+    The base **model image** already ships with `mlflow`, `confluent-kafka`, `fastavro`, and `requests` pre-installed for the Kafka bridge. See the [`Dockerfile.model`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/blob/main/docker/Dockerfile.model) for the exact versions.
+
 ### CI and MLflow tags
 
-After both images are built and pushed to GHCR, CI sets two tags on the MLflow model version:
+After both images are built and pushed to [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (GitHub Container Registry), CI sets two tags on the MLflow model version:
 
 | Tag | Value |
 |-----|-------|
@@ -181,7 +187,7 @@ After both images are built and pushed to GHCR, CI sets two tags on the MLflow m
 
 **A model version only appears in the Fink AI selector if both tags are present.** This guarantees that only successfully built and tested models can be launched.
 
-You can check the tags directly in the MLflow UI, under **Models → your model → Versions**:
+You can check the tags directly in the [Fink MLflow UI](https://mlflow-dev.fink-broker.org), under **Models → your model → Versions**:
 
 ![Model registry versions with preprocessing_image and model_image tags](../img/fink_ai_model_registry_tags.png)
 
@@ -216,7 +222,7 @@ To download results you need `fink-client`. See [fink_client.md](fink_client.md)
 
 ### Docker / GHCR (for model authors)
 
-If you are registering a new model, your organisation must have write access to push images to GHCR. The CI pipelines in `mlflow-preprocessing-runner` handle the builds automatically on every push to `main`.
+If you are registering a new model, your organisation must have write access to push images to GHCR. The CI pipelines in [`mlflow-preprocessing-runner`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow) handle the builds automatically on every push to `main` of that repository — you can follow the build progress in the [GitHub Actions runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions).
 
 ---
 
@@ -224,15 +230,14 @@ If you are registering a new model, your organisation must have write access to 
 
 ### My model does not appear in the selector
 
-Check that both `preprocessing_image` and `model_image` tags are set on the MLflow model version. You can inspect them in the MLflow UI under **Models → your model → version → Tags**.
+Check that both `preprocessing_image` and `model_image` tags are set on the MLflow model version. You can inspect them in the MLflow UI under **Models → your model → version → Tags**. If the tags are missing, check the [CI runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions) of `mlflow-preprocessing-runner` to make sure the preprocessing and model image builds did not fail.
 
 ### The output topic is empty after 10 minutes
 
 - Make sure there is data for the requested dates (check the [statistics endpoint](search/statistics.md)).
 - Check that the selected alert classes exist in the date range.
-- For K8s-only mode, verify that the input topic `fink_ai_feed_*` has been populated manually.
 
-### `UNKNOWN_TOPIC_OR_PART` error when consuming
+### `UNKNOWN_TOPIC_OR_PARTITION` error when consuming
 
 The Kubernetes jobs may still be starting up. Wait 2–3 minutes after submission and retry.
 
