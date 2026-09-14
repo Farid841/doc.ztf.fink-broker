@@ -17,7 +17,7 @@ This cycle makes it **slow and costly to iterate** on ML models. A researcher wh
 
 Beyond deployment delays, there is a deeper constraint: **all science modules share the same execution environment inside the broker**. This means every module must use the same versions of every package: `numpy`, `scikit-learn`, `tensorflow`, etc. A user who needs a specific library version for their model, or who wants to experiment with a new framework, simply cannot do so without potentially breaking every other module in the pipeline. This rigidity severely limits the flexibility researchers need to iterate on their models.
 
-**Fink AI removes both bottlenecks.** It lets any user register a model in the Fink [MLflow](https://mlflow-dev.fink-broker.org/) registry and immediately run it on any slice of historical ZTF data, using its own isolated Docker image with whatever dependencies it needs, without touching the broker codebase, without waiting for a release, and without interfering with anyone else.
+**Fink AI removes both bottlenecks.** It lets any user register a model in the Fink [MLflow](https://mlflow.fink-broker.org/) registry and immediately run it on any slice of historical ZTF data, using its own isolated Docker image with whatever dependencies it needs, without touching the broker codebase, without waiting for a release, and without interfering with anyone else.
 
 Results land in a private Kafka topic within minutes and can be downloaded with the standard [fink-client](fink_client.md).
 
@@ -187,7 +187,7 @@ After both images are built and pushed to [GHCR](https://docs.github.com/en/pack
 
 **A model version only appears in the Fink AI selector if both tags are present.** This guarantees that only successfully built and tested models can be launched.
 
-You can check the tags directly in the [Fink MLflow UI](https://mlflow-dev.fink-broker.org), under **Models → your model → Versions**:
+You can check the tags directly in the [Fink MLflow UI](https://mlflow.fink-broker.org), under **Models → your model → Versions**:
 
 ![Model registry versions with preprocessing_image and model_image tags](../img/fink_ai_model_registry_tags.png)
 
@@ -199,8 +199,8 @@ You can check the tags directly in the [Fink MLflow UI](https://mlflow-dev.fink-
 
 You need access to the Fink MLflow registry:
 
-- Tracking URI: `https://mlflow-dev.fink-broker.org`
-- Credentials: authentication is done via SSO (eduGAIN or ORCID account). Log in at [mlflow-dev.fink-broker.org/oidc/ui/user](https://mlflow-dev.fink-broker.org/oidc/ui/user), then click **+ Create Access Token** on your User Page to generate one.
+- Tracking URI: `https://mlflow.fink-broker.org`
+- Credentials: authentication is done via SSO (eduGAIN or ORCID account). Log in at [mlflow.fink-broker.org/oidc/ui/user](https://mlflow.fink-broker.org/oidc/ui/user), then click **+ Create Access Token** on your User Page to generate one.
 
 ![MLflow user page](../img/fink_ai_mlflow_user_page.png)
 
@@ -209,7 +209,7 @@ You need access to the Fink MLflow registry:
 Set the environment variables before logging your model, using your username (shown on the User Page) and the access token as password:
 
 ```bash
-export MLFLOW_TRACKING_URI=https://mlflow-dev.fink-broker.org
+export MLFLOW_TRACKING_URI=https://mlflow.fink-broker.org
 export MLFLOW_TRACKING_USERNAME=your_username
 export MLFLOW_TRACKING_PASSWORD=your_access_token
 ```
