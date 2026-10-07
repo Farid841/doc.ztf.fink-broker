@@ -94,6 +94,9 @@ ZTF alerts (AVRO)
   fink_ai_* (Kafka topic)
 ```
 
+!!! tip "Start from the model template"
+    To write your preprocessing and log your model, follow the [model template](https://github.com/Farid841/model_template): it contains an example `preprocessing.py`, a training notebook, and checks that your preprocessing and your model work together before they are uploaded to MLflow.
+
 ### Block 1 Preprocessing
 
 The preprocessing image contains a single Python file `preprocessing.py` that exposes a `pre_processing` function:
@@ -102,7 +105,6 @@ The preprocessing image contains a single Python file `preprocessing.py` that ex
 # preprocessing.py
 
 FEATURE_NAMES = ["rb", "drb", "classtar", "fwhm", "elong", "magpsf"]
-N_FEATURES    = len(FEATURE_NAMES)
 
 def pre_processing(alert: dict) -> list[float]:
     """Extract a feature vector from a raw ZTF alert dict.
@@ -115,7 +117,7 @@ def pre_processing(alert: dict) -> list[float]:
     Returns
     -------
     list[float]
-        Feature vector of length N_FEATURES.  None values must be replaced by 0.0.
+        One value per name in FEATURE_NAMES.  None values must be replaced by 0.0.
     """
     c = alert.get("candidate", {})
     return [
@@ -132,9 +134,9 @@ def pre_processing(alert: dict) -> list[float]:
 
 | Rule | Why |
 |------|-----|
-| Returns a `list` of `float` of length exactly `N_FEATURES` | The model expects a fixed-size input |
+| Returns a `list` of `float` of length exactly `len(FEATURE_NAMES)` | The model expects a fixed-size input |
 | Replaces `None` and missing values with `0.0` | Avoids silent shape errors downstream |
-| Exports `FEATURE_NAMES` (list of str) and `N_FEATURES` (int) at module level | Used by CI to validate the contract before building |
+| Exports `FEATURE_NAMES` (list of unique str) at module level | Gives the expected number of features |
 | No heavy dependencies (`numpy`, `pandas`, …) unless added to `requirements.txt` | Keeps the preprocessing image small |
 
 A `requirements.txt` file must sit next to `preprocessing.py`. It can be empty if only the standard library is used.
@@ -222,7 +224,7 @@ To download results you need `fink-client`. See [fink_client.md](fink_client.md)
 
 ### Docker / GHCR (for model authors)
 
-If you are registering a new model, your organisation must have write access to push images to GHCR. The CI pipelines in [`mlflow-preprocessing-runner`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow) handle the builds automatically on every push to `main` of that repository — you can follow the build progress in the [GitHub Actions runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions).
+If you are registering a new model, your organisation must have write access to push images to GHCR. Logging a model does not start a build: the `build-mlflow-images` workflow of [`mlflow-preprocessing-runner`](https://github.com/Farid841/pre_processing-container-generator-from-mlflow) builds the two images when it receives the run ID and the model URI of your version (manual run of the workflow, or `mlflow-model-version` webhook). You can follow the build progress in the [GitHub Actions runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions).
 
 ---
 
