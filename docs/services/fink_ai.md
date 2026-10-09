@@ -36,7 +36,7 @@ Updating a science module in the broker requires a pull request, a review and a 
 
 ![MLflow error: user is not allowed to login](../img/fink_ai_mlflow_not_allowed.png)
 
-**Step 4** Once you have been granted access, repeat the same steps. You land on the MLflow welcome page:
+**Step 4** Once you have been granted access, repeat the same steps (if you do not hear from us, leave a message on Slack or email). You land on the MLflow welcome page:
 
 ![MLflow welcome page](../img/fink_ai_mlflow_welcome.png)
 
