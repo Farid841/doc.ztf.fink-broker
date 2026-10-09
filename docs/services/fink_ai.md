@@ -262,7 +262,7 @@ They are attached to the version you just published, and visible in the [Fink ML
 
 ### MLflow says I am not allowed to login
 
-Your account has not been granted access yet: this is expected the first time (see [MLflow account creation](#mlflow-account-creation)). Once access is granted, sign in again.
+Your account has not been granted access yet: this is expected the first time (see [MLflow account creation](#mlflow-account-creation)). You should be given access rapidly, but if that's not the case, reach us on Slack or via email. Once access is granted, sign in again.
 
 ### Logging to MLflow fails with an authentication error
 
