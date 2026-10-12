@@ -150,11 +150,11 @@ CI builds both images for you.
 !!! tip "New to MLflow?"
     The model template below is all you need. If you want to learn more about MLflow, you can have a look at the [tutorial notebooks](https://github.com/astrolabsoftware/fink-tutorials/tree/main/ztf/fink%20ai).
 
-**Step 1** Install the [model template](https://github.com/Farid841/model_template). It contains an example preprocessing, a training notebook and the `fink-model` command:
+**Step 1** Install the [model template](https://github.com/astrolabsoftware/fink-ai-model-template). It contains an example preprocessing, a training notebook and the `fink-model` command:
 
 ```bash
-git clone https://github.com/Farid841/model_template.git
-cd model_template
+git clone https://github.com/astrolabsoftware/fink-ai-model-template.git
+cd fink-ai-model-template
 pip install -e .
 ```
 
@@ -236,11 +236,9 @@ A model version appears in the selector **only once both its images are built**.
 !!! warning "Only three aliases trigger the build"
     `release`, `challenger` and `champion`. With any other alias, or no alias, nothing is built and the model never appears in the selector.
 
-**Step 6** Wait for the build. CI validates the preprocessing, builds both images and pushes them to [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry). It takes about 30 minutes; follow it in the [GitHub Actions runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions).
+**Step 6** Wait for the build. CI validates the preprocessing, builds both images and pushes them to [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry). It takes about 30 minutes; follow it in the [GitHub Actions runs](https://github.com/astrolabsoftware/fink-ai-image-builder/actions).
 
-<!-- TODO screenshot: GitHub Actions, a successful build-mlflow-images run
 ![Build of the two images in GitHub Actions](../img/fink_ai_github_actions_build.png)
--->
 
 **Step 7** Check the tags. When the build succeeds, CI sets two tags on the model version:
 
@@ -297,7 +295,7 @@ The `preprocessing_image` or `model_image` tag is missing on the model version. 
 
 ### The build of my model or preprocessing fails
 
-Open the [GitHub Actions runs](https://github.com/Farid841/pre_processing-container-generator-from-mlflow/actions) and look at the logs of your run. To start a new build after a fix, log a new version and add the alias again.
+Open the [GitHub Actions runs](https://github.com/astrolabsoftware/fink-ai-image-builder/actions) and look at the logs of your run. To start a new build after a fix, log a new version and add the alias again.
 
 ### The output topic is empty after 10 minutes
 
