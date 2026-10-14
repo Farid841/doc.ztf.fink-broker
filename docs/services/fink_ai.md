@@ -70,7 +70,7 @@ Fink AI is the [Data Transfer](data_transfer.md) form with one extra step, step 
 
 ![Step 2 - Reduce number](../img/fink_ai_step2.png)
 
-**Step 3** Choose the output fields:
+**Step 3** You do not need to choose the output fields -- Medium Content will always be selected.
 
 ![Step 3 - Choose content](../img/fink_ai_step3.png)
 
