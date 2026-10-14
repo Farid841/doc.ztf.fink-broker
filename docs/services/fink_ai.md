@@ -16,7 +16,7 @@ Updating a science module in the broker requires a pull request, a review and a 
 
 | To... | You need |
 |-------|----------|
-| Run existing models and download the results | [fink-client](fink_client.md) version 12.0 or later |
+| Run existing models and download the results | [fink-client](fink_client.md) version 12.3.0 or later |
 | Register your own model | A [Fink MLflow](https://mlflow.fink-broker.org) account |
 
 ## MLflow account creation
